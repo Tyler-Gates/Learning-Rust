@@ -8,10 +8,10 @@ The first thing on my list of material to consume for learning Rust starts with 
 Through the chapters of the book, there are exercises to do on my own, those will be logged in their respective chapters!
 
 Outline of Chapters:
-1. Hello World
-2. Guessing Game
-3. Common Programming Concepts
-4. Understanding Ownership
+1. Hello World✔️[7/24/22]
+2. Guessing Game✔️[7/24/22]
+3. Common Programming Concepts✔️[7/24/22]
+4. Understanding Ownership✔️[8/1/22]
 5. Using Structs to Structure Related Data
 6. Enums and Pattern Matching
 7. Managing Growing Projects with Packages, Crates, and Modules

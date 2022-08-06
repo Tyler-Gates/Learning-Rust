@@ -13,7 +13,7 @@ Outline of Chapters:
 3. Common Programming Concepts✔️[7/24/22]
 4. Understanding Ownership✔️[8/1/22]
 5. Using Structs to Structure Related Data✔️[8/3/22]
-6. Enums and Pattern Matching
+6. Enums and Pattern Matching✔️[8/5/22]
 7. Managing Growing Projects with Packages, Crates, and Modules
 8. Common Collections
 9. Error Handling

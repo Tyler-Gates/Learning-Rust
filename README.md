@@ -14,7 +14,7 @@ Outline of Chapters:
 4. Understanding Ownership✔️[8/1/22]
 5. Using Structs to Structure Related Data✔️[8/3/22]
 6. Enums and Pattern Matching✔️[8/5/22]
-7. Managing Growing Projects with Packages, Crates, and Modules
+7. Managing Growing Projects with Packages, Crates, and Modules✔️[8/6/22]
 8. Common Collections
 9. Error Handling
 10. Generic Types, Traits, and Lifetimes

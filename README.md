@@ -5,8 +5,6 @@
 
 The first thing on my list of material to consume for learning Rust starts with [✨The Book✨](https://doc.rust-lang.org/book/)
 
-Through the chapters of the book, there are exercises to do on my own, those will be logged in their respective chapters!
-
 Outline of Chapters:
 1. Hello World✔️[7/24/22]
 2. Guessing Game✔️[7/24/22]

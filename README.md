@@ -13,7 +13,7 @@ Outline of Chapters:
 5. Using Structs to Structure Related Data✔️[8/3/22]
 6. Enums and Pattern Matching✔️[8/5/22]
 7. Managing Growing Projects with Packages, Crates, and Modules✔️[8/6/22]
-8. Common Collections
+8. Common Collections✔️[8/10/22]
 9. Error Handling
 10. Generic Types, Traits, and Lifetimes
 11. Writing Automated Tests

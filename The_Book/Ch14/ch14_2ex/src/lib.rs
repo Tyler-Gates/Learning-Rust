@@ -1,7 +1,7 @@
 //! # Art
 //!
 //! A library for modeling artistic concepts.
-//! VERSION 2
+//! VERSION 1.2
 
 //these can make certain items seen at the top level to make it easy on developers to find what they need
 //this allows people to call ch14_2::PrimaryColor as opposed to a bunch of nested modules

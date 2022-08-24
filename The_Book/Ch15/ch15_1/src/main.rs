@@ -7,6 +7,8 @@ enum List {
     Nil,
 }
 
+
+//to determine how much space is needed to allocate for a message, it checks the largest enum variant in the enum
 enum Message {
     Quit,
     Move { x: i32, y: i32 },

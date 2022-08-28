@@ -20,7 +20,7 @@ Outline of Chapters:
 12. An I/O Project: Building a Command Line Program✔️[8/17/22]
 13. Functional Language Features: Iterators and Closures✔️[8/21/22]
 14. More about Cargo and Crates.io✔️[8/21/22]
-15. Smart Pointers
+15. Smart Pointers✔️[8/27/22]
 16. Fearless Concurrency
 17. Object Oriented Programming Features of Rust
 18. Patterns and Matching

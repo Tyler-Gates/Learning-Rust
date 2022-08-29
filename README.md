@@ -21,7 +21,7 @@ Outline of Chapters:
 13. Functional Language Features: Iterators and Closures✔️[8/21/22]
 14. More about Cargo and Crates.io✔️[8/21/22]
 15. Smart Pointers✔️[8/27/22]
-16. Fearless Concurrency
+16. Fearless Concurrency✔️[8/28/22]
 17. Object Oriented Programming Features of Rust
 18. Patterns and Matching
 19. Advanced Features

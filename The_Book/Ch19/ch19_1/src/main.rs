@@ -86,3 +86,5 @@ unsafe trait Foo {
 unsafe impl Foo for i32 {
     // method implementations go here
 }
+
+//no code ex, but unions can only be used in unsafe blocks

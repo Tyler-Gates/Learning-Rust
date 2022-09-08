@@ -3,7 +3,7 @@
 
 ![Rust](https://foundation.rust-lang.org/img/rust-logo-blk.svg)
 
-The first thing on my list of material to learn Rust starts with [✨The Book✨](https://doc.rust-lang.org/book/)
+The first thing on my list starts with [✨The Book✨](https://doc.rust-lang.org/book/)
 
 Outline of Chapters:
 1. Hello World✔️[7/24/22]

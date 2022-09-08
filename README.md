@@ -24,5 +24,5 @@ Outline of Chapters:
 16. Fearless Concurrency✔️[8/28/22]
 17. Object Oriented Programming Features of Rust✔️[8/31/22]
 18. Patterns and Matching✔️[9/3/22]
-19. Advanced Features
+19. Advanced Features✔️[9/7/22]
 20. Final Project: Building a Multithreaded Web Server

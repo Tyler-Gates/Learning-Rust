@@ -25,4 +25,10 @@ Outline of Chapters:
 17. Object Oriented Programming Features of Rust✔️[8/31/22]
 18. Patterns and Matching✔️[9/3/22]
 19. Advanced Features✔️[9/7/22]
-20. Final Project: Building a Multithreaded Web Server
+20. Final Project: Building a Multithreaded Web Server✔️[9/15/22]
+
+
+Second thing on my list is [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/)
+
+This is meant for after you finish the book to get hands on experience. You are given unit tests each chapter, 
+and need to write your own code to pass the tests Ultimately this project will make a command line program that lets you hide secret messages in PNG files.

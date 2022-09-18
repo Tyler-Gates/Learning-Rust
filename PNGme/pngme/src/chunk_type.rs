@@ -1,12 +1,17 @@
 
+#[derive(Debug)]
 pub struct ChunkType {
     bytes: [u8; 4],
 }
 
-
+#[derive(Debug)]
+pub enum ChunkTypeError {
+    InvalidArgs { details: String},
+}
 
 
 impl ChunkType {
+
     pub fn bytes(&self) -> [i32;4] {
         let mut ans: [i32;4] = [0;4];
         for i in 0..4 {
@@ -15,25 +20,80 @@ impl ChunkType {
         ans
     }
 
-    pub fn try_from(input: [u8; 4]) -> Result<ChunkType,&'static str> {
-        if input.len() != 4{
-            return Err("Must be four bytes");
-        }
-        let mut bytes: [u8;4] = [0; 4];
-        for i in 0..4 {
-            bytes[i] = input[i];
-        }
+    pub fn is_critical(&self) -> bool {
+        self.bytes[0] >= 65 && self.bytes[0] <= 90
+    }
 
+    pub fn is_public(&self) -> bool {
+        self.bytes[1] >= 65 && self.bytes[1] <= 90
+    }
+    
+    pub fn is_reserved_bit_valid(&self) -> bool {
+        self.bytes[2] >= 65 && self.bytes[2] <= 90
+    }
+
+    pub fn is_safe_to_copy(&self) -> bool {
+        self.bytes[3] >= 97 && self.bytes[3] <= 122
+    }
+
+    pub fn to_string(&self) -> String {
+        std::str::from_utf8(&self.bytes).unwrap().to_string()
+    }
+}
+
+impl PartialEq for ChunkType {
+    fn eq(&self, other: &Self) -> bool {
+        self.bytes() == other.bytes()
+    }
+}
+
+impl std::fmt::Display for ChunkType {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+
+        write!(f, "Byte1:{} Byte2:{} Byte3:{} Byte4:{}", self.bytes[0], self.bytes[1], self.bytes[2], self.bytes[3])
+    }
+}
+
+impl std::str::FromStr for ChunkType {
+    type Err = ChunkTypeError;
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        if input.len() != 4{
+            return Err(ChunkTypeError::InvalidArgs { details: "Must be 4 characters long!".to_string() } );
+        }
+        let mut bytes: [u8;4] = [0;4];
+        for i in 0..4 {
+            let temp = input.chars().nth(i).unwrap() as u8;
+            if (temp <= 90 && temp >= 65) || (temp <= 122 && temp >= 97) {
+                bytes[i] = temp;
+            }   
+            else{
+                return Err(ChunkTypeError::InvalidArgs { details: "Alphabetical characters only!".to_string() } );
+            }
+        }
         Ok(ChunkType { bytes })
     }
 }
 
+impl std::convert::TryFrom<[u8;4]> for ChunkType {
+    type Error = ChunkTypeError;
 
+    fn try_from(input: [u8; 4]) -> Result<Self, Self::Error> {
+        let mut bytes: [u8;4] = [0; 4];
+        for i in 0..4 { 
+            if (input[i] <= 90 && input[i] >= 65) || (input[i] <= 122 && input[i] >= 97) {
+                bytes[i] = input[i];
+            }   
+            else{
+                return Err(ChunkTypeError::InvalidArgs { details: "Alphabetical characters only!".to_string() } );
+            }
+        }
 
+        Ok(ChunkType { bytes })
+    }
 
+}
 
-#[allow(unused_variables)]
-fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -104,21 +164,6 @@ mod tests {
     }
 
     #[test]
-    pub fn test_valid_chunk_is_valid() {
-        let chunk = ChunkType::from_str("RuSt").unwrap();
-        assert!(chunk.is_valid());
-    }
-
-    #[test]
-    pub fn test_invalid_chunk_is_valid() {
-        let chunk = ChunkType::from_str("Rust").unwrap();
-        assert!(!chunk.is_valid());
-
-        let chunk = ChunkType::from_str("Ru1t");
-        assert!(chunk.is_err());
-    }
-
-    #[test]
     pub fn test_chunk_type_string() {
         let chunk = ChunkType::from_str("RuSt").unwrap();
         assert_eq!(&chunk.to_string(), "RuSt");
@@ -131,5 +176,4 @@ mod tests {
         let _chunk_string = format!("{}", chunk_type_1);
         let _are_chunks_equal = chunk_type_1 == chunk_type_2;
     }
-}
 }

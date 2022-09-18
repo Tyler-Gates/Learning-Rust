@@ -1,15 +1,38 @@
 
-struct ChunkType {
-    
+pub struct ChunkType {
+    bytes: [u8; 4],
+}
+
+
+
+
+impl ChunkType {
+    pub fn bytes(&self) -> [i32;4] {
+        let mut ans: [i32;4] = [0;4];
+        for i in 0..4 {
+            ans[i] = self.bytes[i] as i32;
+        }
+        ans
+    }
+
+    pub fn try_from(input: [u8; 4]) -> Result<ChunkType,&'static str> {
+        if input.len() != 4{
+            return Err("Must be four bytes");
+        }
+        let mut bytes: [u8;4] = [0; 4];
+        for i in 0..4 {
+            bytes[i] = input[i];
+        }
+
+        Ok(ChunkType { bytes })
+    }
 }
 
 
 
 
 
-
-
-#![allow(unused_variables)]
+#[allow(unused_variables)]
 fn main() {
 #[cfg(test)]
 mod tests {

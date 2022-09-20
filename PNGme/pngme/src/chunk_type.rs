@@ -12,12 +12,8 @@ pub enum ChunkTypeError {
 
 impl ChunkType {
 
-    pub fn bytes(&self) -> [i32;4] {
-        let mut ans: [i32;4] = [0;4];
-        for i in 0..4 {
-            ans[i] = self.bytes[i] as i32;
-        }
-        ans
+    pub fn bytes(&self) -> [u8;4] {
+        self.bytes
     }
 
     pub fn is_critical(&self) -> bool {

@@ -1,34 +1,60 @@
-# Rust Repo 
-*Where I will log my progress learning rust!*
+# Rust learning!
 
-![Rust](https://foundation.rust-lang.org/img/rust-logo-blk.svg)
+Hi! This is where I'm keeping track of what and how I'm learning Rust! The First section are the materials I used, with each subsequent section the chapters and the date of completion. 
 
-The first thing on my list starts with [✨The Book✨](https://doc.rust-lang.org/book/)
+# Materials
+
+- [✨The Book✨](https://doc.rust-lang.org/book/) is the official Rust Programming Language book that is installed with rust! `rustup doc`
+- [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/): This project only gives unit tests and relevant reading material to create a CLI PNG hidden message encoder/decoder
+- More to come..
+
+## ✨The Book✨
 
 Outline of Chapters:
+
 1. Hello World✔️[7/24/22]
 2. Guessing Game✔️[7/24/22]
+
 3. Common Programming Concepts✔️[7/24/22]
+
 4. Understanding Ownership✔️[8/1/22]
+
 5. Using Structs to Structure Related Data✔️[8/3/22]
+
 6. Enums and Pattern Matching✔️[8/5/22]
+
 7. Managing Growing Projects with Packages, Crates, and Modules✔️[8/6/22]
+
 8. Common Collections✔️[8/10/22]
+
 9. Error Handling✔️[8/10/22]
+
 10. Generic Types, Traits, and Lifetimes✔️[8/12/22]
+
 11. Writing Automated Tests✔️[8/15/22]
+
 12. An I/O Project: Building a Command Line Program✔️[8/17/22]
+
 13. Functional Language Features: Iterators and Closures✔️[8/21/22]
+
 14. More about Cargo and Crates.io✔️[8/21/22]
+
 15. Smart Pointers✔️[8/27/22]
+
 16. Fearless Concurrency✔️[8/28/22]
+
 17. Object Oriented Programming Features of Rust✔️[8/31/22]
+
 18. Patterns and Matching✔️[9/3/22]
+
 19. Advanced Features✔️[9/7/22]
+
 20. Final Project: Building a Multithreaded Web Server✔️[9/15/22]
 
-
-Second thing on my list is [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/)
-
-This is meant for after you finish the book to get hands on experience. You are given unit tests each chapter, 
-and need to write your own code to pass the tests Ultimately this project will make a command line program that lets you hide secret messages in PNG files.
+## PNGme
+*(No hints speed run)*
+1. Chunk Types ✔️[9/18/22]
+2. Chunks✔️[9/19/22]
+3. PNG Files✔️[9/19/22]
+4. Command Line Arguments ✔️[9/20/22]
+5. Using your code to Write More Code✔️[9/20/22]

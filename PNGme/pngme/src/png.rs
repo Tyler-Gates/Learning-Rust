@@ -25,7 +25,7 @@ impl Png {
             self.chunks.push(chunk);
         }
         else {
-            self.chunks.insert(self.chunks.len()-2, chunk);
+            self.chunks.insert(self.chunks.len()-1, chunk);
         }
     }
 
@@ -39,7 +39,7 @@ impl Png {
         Err(ChunkTypeError::InvalidArgs { details: "Could not find chunk!".to_string() } )
     }
 
-    fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
+    pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
         for i in 0..self.chunks.len() {
             if chunk_type.to_string() == self.chunks[i].chunk_type().to_string() {
                 return Some(&self.chunks[i]);

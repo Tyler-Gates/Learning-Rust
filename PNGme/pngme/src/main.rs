@@ -5,44 +5,41 @@ mod commands;
 mod png;
 
 use std::str::FromStr;
+use crate::args::Cli;
+use clap::Parser;
 
 pub type Error = Box<dyn std::error::Error>;
 pub type Result<T> = std::result::Result<T, Error>;
 
 fn main() -> Result<()> {
-    let x = chunk_type::ChunkType::try_from([82, 117, 83, 116]).unwrap();
-    let y = chunk_type::ChunkType::from_str("Rust").unwrap();
-    println!("try_from:{:#?}",x.bytes());
-    println!("is_critical:{:#?}",x.is_critical());
-    println!("try_from:{:#?}",x.bytes());
+    let cli = Cli::parse();
 
-    println!("from_str:{:#?}",y.bytes());
-    println!("is_critical:{:#?}",y.is_critical());
-    println!("from_str:{:#?}",y.bytes());
+        match cli.command.as_deref().unwrap() {
+            "encode" => {
+                let path = cli.path.as_deref().expect("Did not enter path!").to_string();
+                let chunk_type = cli.chunk_type.as_deref().expect("Did not enter chunk_type!").to_string();
+                let message = cli.message.as_deref().expect("Did not enter message!").to_string();
 
-    println!("///////////////////////////////////////////////////////////////////////");
-
-    let chunk_type = chunk_type::ChunkType::from_str("RuSt").unwrap();
-    let data = "This is where your secret message will be!".as_bytes().to_vec();
-    let chunk = chunk::Chunk::new(chunk_type, data);
-    println!("checksum 2882656334 = {:#?}", chunk.crc());
-    println!("length: {:#?}", chunk.length());
-    println!("data: {:#?}", chunk.data());
-    println!("data as string: {:#?}", chunk.data_as_string().unwrap());
-    println!("chunk_type: {:#?}", chunk.chunk_type().to_string());
-    println!("as bytes: {:#?}", chunk.as_bytes());
-
-    println!("///////////////////////////////////////////////////////////////////////");
-
-    let _chunk_string = format!("{}", chunk);
-    println!("{}", _chunk_string);
-
-    println!("///////////////////////////////////////////////////////////////////////");
-
-    let png = png::Png::try_from(&PNG_FILE[..]).unwrap();
-
-    println!("{}", png);
-
+                commands::Commands::encode(path, chunk_type, message);
+            }
+            "decode" => {
+                let path = cli.path.as_deref().expect("Did not enter path!").to_string();
+                let chunk_type = cli.chunk_type.as_deref().expect("Did not enter chunk_type!").to_string();
+                commands::Commands::decode(path, chunk_type);
+            }
+            "remove" => {
+                let path = cli.path.as_deref().expect("Did not enter path!").to_string();
+                let chunk_type = cli.chunk_type.as_deref().expect("Did not enter chunk_type!").to_string();
+                commands::Commands::remove(path, chunk_type);
+            }
+            "print" => {
+                let path = cli.path.as_deref().expect("Did not enter path!").to_string();
+                commands::Commands::print(path);
+            }
+            _ => {
+                println!("Not a valid command! type './pngme -./-help'");
+            }
+        }
     Ok(())
 }
 

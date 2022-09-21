@@ -1,6 +1,8 @@
+
+
 # Rust learning!
 
-Hi! This is where I'm keeping track of what and how I'm learning Rust! The First section are the materials I used, with each subsequent section the chapters and the date of completion. 
+Hi! This is where I'm keeping track of what and how I'm learning Rust! The first section are my learning materials with each subsequent section the chapters and the date of completion. 
 
 # Materials
 
@@ -13,6 +15,7 @@ Hi! This is where I'm keeping track of what and how I'm learning Rust! The First
 Outline of Chapters:
 
 1. Hello World✔️[7/24/22]
+
 2. Guessing Game✔️[7/24/22]
 
 3. Common Programming Concepts✔️[7/24/22]
@@ -53,8 +56,13 @@ Outline of Chapters:
 
 ## PNGme
 *(No hints speed run)*
+
 1. Chunk Types ✔️[9/18/22]
+
 2. Chunks✔️[9/19/22]
+
 3. PNG Files✔️[9/19/22]
+
 4. Command Line Arguments ✔️[9/20/22]
+
 5. Using your code to Write More Code✔️[9/20/22]

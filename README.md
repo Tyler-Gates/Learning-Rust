@@ -8,7 +8,8 @@ Hi! This is where I'm keeping track of what and how I'm learning Rust! The first
 
 - [✨The Book✨](https://doc.rust-lang.org/book/) is the official Rust Programming Language book that is installed with rust! `rustup doc`
 - [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/): This project only gives unit tests and relevant reading material to create a CLI PNG hidden message encoder/decoder
-- More to come..
+- [Cryptopals Crypto Challenges](https://cryptopals.com/) are a series of coding challenge sets that are derived from weaknesses in real world systems and modern cryptographic constructions.
+- .. more to come!
 
 ## ✨The Book✨
 
@@ -66,3 +67,21 @@ Outline of Chapters:
 4. Command Line Arguments ✔️[9/20/22]
 
 5. Using your code to Write More Code✔️[9/20/22]
+
+## Cryptopals Crypto Challenges
+
+1. Basics
+
+2. Block Crypto
+
+3. Block and stream crypto
+
+4. Stream crypto and randomness
+
+5. Diffie-Hellman and friends
+
+6. RSA and DSA
+
+7. Hashes
+
+8. Abstract Algebra

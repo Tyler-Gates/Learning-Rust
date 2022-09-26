@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "set_one"
+name = "Challenges"
 version = "0.1.0"

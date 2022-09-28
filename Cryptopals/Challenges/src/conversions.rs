@@ -1,12 +1,18 @@
 pub struct Convert;
+use phf::phf_map;
 
 impl Convert {
 
-    //base64 table with each value indexed to it's binary value
-    const BASE64_LOOKUP_TABLE: [char; 64] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-                                             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-                                             'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-                                             'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/' ];
+    //base64 hashmap tables to convert between base10 ascii and their respective base64 values
+    const BASE64_TO_CHAR_HASHMAP: phf::Map<u8, char> = phf_map! { 0u8 => 'A',  1u8 => 'B',  2u8 =>  'C', 3u8 => 'D',  4u8 =>  'E', 5u8 =>  'F', 6u8 =>  'G', 7u8 =>  'H', 8u8 =>  'I', 9u8 =>  'J', 10u8 => 'K', 11u8 => 'L', 12u8 => 'M', 13u8 => 'N', 14u8 => 'O', 15u8 => 'P',
+                                                                  16u8 => 'Q', 17u8 => 'R', 18u8 => 'S', 19u8 => 'T', 20u8 => 'U', 21u8 => 'V', 22u8 => 'W', 23u8 => 'X', 24u8 => 'Y', 25u8 => 'Z', 26u8 => 'a', 27u8 => 'b', 28u8 => 'c', 29u8 => 'd', 30u8 => 'e', 31u8 => 'f',
+                                                                  32u8 => 'g', 33u8 => 'h', 34u8 => 'i', 35u8 => 'j', 36u8 => 'k', 37u8 => 'l', 38u8 => 'm', 39u8 => 'n', 40u8 => 'o', 41u8 => 'p', 42u8 => 'q', 43u8 => 'r', 44u8 => 's', 45u8 => 't', 46u8 => 'u', 47u8 => 'v',
+                                                                  48u8 => 'w', 49u8 => 'x', 50u8 => 'y', 51u8 => 'z', 52u8 => '0', 53u8 => '1', 54u8 => '2', 55u8 => '3', 56u8 => '4', 57u8 => '5', 58u8 => '6', 59u8 => '7', 60u8 => '8', 61u8 => '9', 62u8 => '+', 63u8 => '/' };
+
+    const BASE64_TO_BINARY_HASHMAP: phf::Map<char, u8> = phf_map! { 'A' => 0u8,  'B' => 1u8,  'C' => 2u8,  'D' => 3u8,  'E' => 4u8,  'F' => 5u8,  'G' => 6u8,  'H' => 7u8,  'I' => 8u8,  'J' => 9u8,  'K' => 10u8, 'L' => 11u8, 'M' => 12u8, 'N' => 13u8, 'O' => 14u8, 'P' => 15u8,
+                                                                    'Q' => 16u8, 'R' => 17u8, 'S' => 18u8, 'T' => 19u8, 'U' => 20u8, 'V' => 21u8, 'W' => 22u8, 'X' => 23u8, 'Y' => 24u8, 'Z' => 25u8, 'a' => 26u8, 'b' => 27u8, 'c' => 28u8, 'd' => 29u8, 'e' => 30u8, 'f' => 31u8,
+                                                                    'g' => 32u8, 'h' => 33u8, 'i' => 34u8, 'j' => 35u8, 'k' => 36u8, 'l' => 37u8, 'm' => 38u8, 'n' => 39u8, 'o' => 40u8, 'p' => 41u8, 'q' => 42u8, 'r' => 43u8, 's' => 44u8, 't' => 45u8, 'u' => 46u8, 'v' => 47u8,
+                                                                    'w' => 48u8, 'x' => 49u8, 'y' => 50u8, 'z' => 51u8, '0' => 52u8, '1' => 53u8, '2' => 54u8, '3' => 55u8, '4' => 56u8, '5' => 57u8, '6' => 58u8, '7' => 59u8, '8' => 60u8, '9' => 61u8, '+' => 62u8, '/' => 63u8 };
     //base64 has padding characters when there aren't 3 bytes (24 bits) to work with. 
     const PADDING: char = '=';
 
@@ -15,11 +21,10 @@ impl Convert {
     pub fn dec_to_hex(dec: Vec<u8>) -> Vec<u8> {
         let mut hex: Vec<u8> = Vec::new();
         for i in 0..dec.len() {
-            let mut quotient = dec[i].clone();
-            let mut conversion = 0;
-            conversion = (quotient/16) % 16;
+            let quotient = dec[i].clone();
+            let conversion = (quotient/16) % 16;
             hex.push(conversion);
-            conversion = quotient % 16;
+            let conversion = quotient % 16;
             hex.push(conversion);
         }
         hex
@@ -126,11 +131,10 @@ impl Convert {
             //Base64 utilize 6 bits, leaving the last 2 as unused.
             // *0000 00*00 
             let byte = (hex[i-1] << 2) + (hex[i] >> 2);
-            ans.push(Convert::BASE64_LOOKUP_TABLE[usize::from(byte)]);
-
+            ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&(byte)]);
             //if the end is reached, utilize the remaining bits,add padding to 24 bits, and break.
             if i+1 >= hex.len() {
-                ans.push(Convert::BASE64_LOOKUP_TABLE[usize::from(hex[i] << 4)]);
+                ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&(hex[i] << 4)]);
                 ans.push(Convert::PADDING);
                 ans.push(Convert::PADDING);
                 break;
@@ -139,7 +143,7 @@ impl Convert {
             // *0000 00*00 0000* now on the second base64 byte
             let prev = hex[i] << 6;
             let byte = (prev >> 2) + (hex[i+1]);
-            ans.push(Convert::BASE64_LOOKUP_TABLE[usize::from(byte)]);
+            ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&byte]);
 
             if i+2 >= hex.len() {
                 panic!("Must be Hexadecimal String! (two characters per hexadecimal value)")
@@ -147,14 +151,14 @@ impl Convert {
 
             //if the end is reached, utilize the remaining bits,add padding to 24 bits, and break.
             if i+3 >= hex.len() {
-                ans.push(Convert::BASE64_LOOKUP_TABLE[usize::from(hex[i+2] << 2)]);
+                ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&(hex[i+2] << 2)]);
                 ans.push(Convert::PADDING);
                 break;
             }
                 
             // *0000 00*00 0000* 0000 00*00 now on the third base64 byte
             let byte = (hex[i+2] << 2) + (hex[i+3] >> 2);
-            ans.push(Convert::BASE64_LOOKUP_TABLE[usize::from(byte)]);
+            ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&byte]);
 
             if i+4 >= hex.len() {
                 panic!("Must be Hexadecimal String! (two characters per hexadecimal value)")
@@ -163,11 +167,33 @@ impl Convert {
             // *0000 00*00 0000* 0000 00*00 0000* now on the fourth base64 byte
             let prev = hex[i+3] << 6;
             let byte = (prev >> 2) + (hex[i+4]);
-            ans.push(Convert::BASE64_LOOKUP_TABLE[usize::from(byte)]);
+            ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&byte]);
 
             i=i+6;
         }
         ans
+    }
+
+    //converts base64 string to ascii string
+    pub fn base64_to_ascii(string: &str) -> String {
+        let mut bytes: Vec<u8> = Vec::new();
+        for i in 0..string.len() {
+            let current = string.chars().nth(i).unwrap();
+            if Convert::BASE64_TO_BINARY_HASHMAP.contains_key(&current) {
+                println!("CHAR: {:#?}", &current);
+                bytes.push(Convert::BASE64_TO_BINARY_HASHMAP[&current]);
+            }
+            else if current != '=' {
+                panic!("Not a valid base64 string!");
+            }
+        }
+
+
+
+
+
+
+        String::new()
     }
 }
 

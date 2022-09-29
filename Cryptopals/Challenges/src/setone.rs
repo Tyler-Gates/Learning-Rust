@@ -125,4 +125,15 @@ impl Challenges {
         }
         std::string::String::from_utf8(Convert::hex_to_string(Convert::dec_to_hex(bytes))).unwrap()
     }
+
+    pub fn edit_distance_calculation(string1: &str, string2: &str) -> u32 {
+        let mut count = ((string1.len() - string2.len()) as i32).abs() as u32;
+        let mut length = if string1.len() > string2.len() { string2.len() } else { string1.len() };
+        for i in 0..length {
+            let char1 = string1.chars().nth(i).unwrap();
+            let char2 = string2.chars().nth(i).unwrap();
+            count = count + ((char1 as u8) ^ (char2 as u8)).count_ones();
+        }
+        count
+    }
 }

@@ -175,25 +175,44 @@ impl Convert {
     }
 
     //converts base64 string to ascii string
-    pub fn base64_to_ascii(string: &str) -> String {
+    pub fn base64_to_chars(string: &str) -> String {
         let mut bytes: Vec<u8> = Vec::new();
+        let mut ans = String::new();
         for i in 0..string.len() {
             let current = string.chars().nth(i).unwrap();
             if Convert::BASE64_TO_BINARY_HASHMAP.contains_key(&current) {
-                println!("CHAR: {:#?}", &current);
                 bytes.push(Convert::BASE64_TO_BINARY_HASHMAP[&current]);
             }
             else if current != '=' {
                 panic!("Not a valid base64 string!");
             }
         }
+        let mut index = 1;
+        while index < bytes.len() {
+            let byte = ((bytes[index-1] << 2) + (bytes[index] >> 4)) as u8;
+            ans.push(byte as char);
 
+            if index+1 >= bytes.len() {
+                if  (bytes[index] << 4) != 0u8 {
+                    panic!("Not a valid base64 string, last four bits should be 0..");
+                }
+                break;
+            }
 
+            let byte = ((bytes[index] << 4) + (bytes[index+1] >> 2)) as u8;
+            ans.push(byte as char);
 
-
-
-
-        String::new()
+            if index+2 >= bytes.len() {
+                if  (bytes[index+1] << 6) != 0u8 {
+                    panic!("Not a valid base64 string, last two bits should be 0..");
+                }
+                break;
+            }
+            let byte = ((bytes[index+1] << 6) + (bytes[index+2])) as u8;
+            ans.push(byte as char);
+            index = index + 4;
+        }
+        ans
     }
 }
 

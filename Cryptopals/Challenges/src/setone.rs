@@ -17,19 +17,17 @@ impl Challenges {
     //used to decrypt a hex string that has been XOR'd against a single character to reveal a hidden message..
     //this takes a hex string, converts it to u8 hex vector, converts that to a u8 decimal vector, XOR's the result
     //from characters 32 to 126 and finds the most likely decrypted string based on character frequency
-    pub fn singlebyte_xor_cipher(string: &str) -> String{
-        let bytes = string.to_lowercase().as_bytes().to_vec();
-        let hex = Convert::hex_to_dec(Convert::string_to_hex(bytes));
+    pub fn singlebyte_xor_cipher(string: &Vec<u8>) -> String{
         let mut variations: Vec<String> = Vec::new();
         let mut highest = 0;
         let mut position = 0;
         for i in 32..127 {
             let mut temp: Vec<u8> = Vec::new();
             let mut count = 0;
-            for j in  0..hex.len() {
+            for j in  0..string.len() {
                 //XORs the decimal value if it's a valid character
-                if !((hex[j] ^ i) > 126){
-                    temp.push(hex[j] ^ i);
+                if !((string[j] ^ i) > 126){
+                    temp.push(string[j] ^ i);
                 }
                 else {
                     temp.push(126);
@@ -84,7 +82,9 @@ impl Challenges {
         let mut position = 0;
         //adds to a vector all of the highest likely deciphered strings for each hex string
         for line in content.lines() {
-            let dec = Challenges::singlebyte_xor_cipher(&line.as_ref().unwrap());
+            let bytes = line.unwrap().to_lowercase().as_bytes().to_vec();
+            let dec = Convert::hex_to_dec(Convert::string_to_hex(bytes));
+            let dec = Challenges::singlebyte_xor_cipher(&dec);
             variations.push(dec);
         }
         //finds the highest likely deciphered string amongst all the deciphered strings.
@@ -127,7 +127,7 @@ impl Challenges {
     }
 
     pub fn edit_distance_calculation(string1: &str, string2: &str) -> u32 {
-        let mut count = ((string1.len() - string2.len()) as i32).abs() as u32;
+        let mut count = (((string1.len() - string2.len()) as i32).abs() as u32) * 8;
         let mut length = if string1.len() > string2.len() { string2.len() } else { string1.len() };
         for i in 0..length {
             let char1 = string1.chars().nth(i).unwrap();
@@ -135,5 +135,55 @@ impl Challenges {
             count = count + ((char1 as u8) ^ (char2 as u8)).count_ones();
         }
         count
+    }
+
+    pub fn break_repeatkey_xor(string: &str) -> String{
+        let converted = Convert::base64_to_chars(string);
+        let mut lowest_distance = u32::MAX;
+        let mut keysize = 0;
+        let mut slice1 = "";
+        let mut slice2 = "";
+        for i in 2..40 {
+            if converted.len() > i {
+                slice1 = &converted[0..i];
+            }
+            else{
+                break;
+            }
+            if converted.len() > i*2 {
+                slice2 = &converted[i..(i*2)];
+            }
+            else{
+                break;
+            }
+            let distance = Challenges::edit_distance_calculation(slice1,slice2) / i as u32;
+            if lowest_distance > distance {
+                lowest_distance = distance;
+                keysize = i;
+            }
+        }
+        println!("keysize: {}", keysize);
+        let mut xored = String::new();
+        let mut blocks: Vec<String> = Vec::new();
+        for i in 0..keysize {
+            for j in 0..converted.len()/keysize {
+                xored.push(converted.clone().chars().nth((j*keysize)+i).unwrap());
+            }
+            let x = Challenges::singlebyte_xor_cipher(&xored.as_bytes().to_vec());
+            //println!("block {}: {}", i,converted);
+            blocks.push(x);
+            xored.clear();
+        }
+        let mut ans = String::new();
+        for i in 0..blocks[0].len() {
+            for j in 0..keysize {
+                if blocks[j].len() > i {
+                    ans.push(blocks[j].chars().nth(i).unwrap());
+                }
+            }
+        }
+
+
+        ans
     }
 }

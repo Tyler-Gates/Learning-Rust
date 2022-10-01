@@ -9,15 +9,10 @@ pub struct Challenges;
 
 impl Challenges {
 
-    //used for single byte XOR cipher. Each letter that matches here will increase the weight of that string as being the correctly decyphered string
-    //may be better to use hashmap here so we don't need to iterate through an array for each character.
-    const VOWELS: [char; 12] = [ 'a','e','i','o','u','y',
-                                 'A','E','I','O','U','Y' ];
-
     //used to decrypt a hex string that has been XOR'd against a single character to reveal a hidden message..
     //this takes a hex string, converts it to u8 hex vector, converts that to a u8 decimal vector, XOR's the result
     //from characters 32 to 126 and finds the most likely decrypted string based on character frequency
-    pub fn singlebyte_xor_cipher(string: &Vec<u8>) -> String{
+    pub fn singlebyte_xor_cipher(string: &Vec<u8>) -> (String, u8){
         let mut variations: Vec<String> = Vec::new();
         let mut highest = 0;
         let mut position = 0;
@@ -26,23 +21,23 @@ impl Challenges {
             let mut count = 0;
             for j in  0..string.len() {
                 //XORs the decimal value if it's a valid character
-                if !((string[j] ^ i) > 126){
-                    temp.push(string[j] ^ i);
+                let mut xor = string[j] ^ i;
+                if xor < 32 {
+                    xor = xor + 32;
                 }
-                else {
-                    temp.push(126);
+                while xor > 127 {
+                    xor = xor - 95;
                 }
+                temp.push(xor);
             }
-            //here we get a tally to determine which is the decrypted string based on vowel count
+            //here we get a tally to determine which is the decrypted string based on letter / space count
             for j in 0..temp.len() {
-                for f in 0..Challenges::VOWELS.len() {
-                    if temp[j] == Challenges::VOWELS[f] as u8 {
-                        count = count + 1;
-                    }
+                if (temp[j] >= 65 && temp[j] <=90) || (temp[j] >= 97 && temp[j] <= 122) || temp[j] == 63 || (temp[j] >= 44 && temp[j] <= 46) || (temp[j] >= 32 && temp[j] <= 34){
+                   count = count + 1;
                 }
                 //and take away a tally if it has characters not commonly used in sentences.
-                if (temp[j] >= 91 && temp[j] <= 96) || (temp[j] >= 58 && temp[j] <= 64) || (temp[j] >= 33 && temp[j] <=  47) || (temp[j] >= 123 && temp[j] <=  127) || temp[j] == b'\n' {
-                    count = count - 1;
+                if (temp[j] >= 91 && temp[j] <= 96) || temp[j] == 47 || temp[j] == 64 ||(temp[j] >= 58 && temp[j] <= 62) || (temp[j] >= 35 && temp[j] <=  43) || (temp[j] >= 123 && temp[j] <=  127) {
+                    count = count - 2;
                 }
             }
             if highest < count {
@@ -51,7 +46,7 @@ impl Challenges {
             }
             variations.push(std::string::String::from_utf8(temp).unwrap());
         }
-        variations.remove(position.into())
+        (variations.remove(position.into()), position+32)
 
     }
 
@@ -84,7 +79,7 @@ impl Challenges {
         for line in content.lines() {
             let bytes = line.unwrap().to_lowercase().as_bytes().to_vec();
             let dec = Convert::hex_to_dec(Convert::string_to_hex(bytes));
-            let dec = Challenges::singlebyte_xor_cipher(&dec);
+            let (dec,_) = Challenges::singlebyte_xor_cipher(&dec);
             variations.push(dec);
         }
         //finds the highest likely deciphered string amongst all the deciphered strings.
@@ -92,11 +87,9 @@ impl Challenges {
             let mut count = 0;
             for j in 0..variations[i].len() {
                 let temp = variations[i].chars().nth(j).unwrap() as u8;
-                //here we get a tally to determine which is the decrypted string based on vowel count
-                for f in 0..Challenges::VOWELS.len() {
-                    if temp == Challenges::VOWELS[f] as u8 || temp == 32{
-                        count = count + 1;
-                    }
+                //here we get a tally to determine which is the decrypted string based on letter / space count
+                if (temp >= 65 && temp <=90) || (temp >= 97 && temp <= 122) || temp == 32{
+                    count = count + 3;
                 }
                 //and take away a tally if it has characters not commonly used in sentences.
                 if (temp >= 91 && temp <= 96) || (temp >= 58 && temp <= 64) || (temp >= 32 && temp <=  47) || (temp >= 123 && temp <=  127) {
@@ -140,21 +133,22 @@ impl Challenges {
     pub fn break_repeatkey_xor(string: &str) -> String{
         let converted = Convert::base64_to_chars(string);
         let mut lowest_distance = u32::MAX;
+        let mut key = String::new();
         let mut keysize = 0;
         let mut slice1 = "";
         let mut slice2 = "";
-        for i in 2..40 {
+        for i in 2..=40 {
             if converted.len() > i {
                 slice1 = &converted[0..i];
             }
             else{
-                break;
+                slice1="";
             }
             if converted.len() > i*2 {
                 slice2 = &converted[i..(i*2)];
             }
             else{
-                break;
+                slice2="";
             }
             let distance = Challenges::edit_distance_calculation(slice1,slice2) / i as u32;
             if lowest_distance > distance {
@@ -167,11 +161,12 @@ impl Challenges {
         let mut blocks: Vec<String> = Vec::new();
         for i in 0..keysize {
             for j in 0..converted.len()/keysize {
-                xored.push(converted.clone().chars().nth((j*keysize)+i).unwrap());
+                xored.push(converted.chars().nth((j*keysize)+i).unwrap());
             }
-            let x = Challenges::singlebyte_xor_cipher(&xored.as_bytes().to_vec());
-            //println!("block {}: {}", i,converted);
+            let (x,y) = Challenges::singlebyte_xor_cipher(&xored.as_bytes().to_vec());
+            println!("block {}: {}", i, x);
             blocks.push(x);
+            key.push(y as char);
             xored.clear();
         }
         let mut ans = String::new();
@@ -182,7 +177,7 @@ impl Challenges {
                 }
             }
         }
-
+        println!("key: {:#?}", key);
 
         ans
     }

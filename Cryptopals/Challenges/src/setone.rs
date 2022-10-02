@@ -149,15 +149,11 @@ impl Challenges {
             let slice4 = &converted[(i*4)..(i*5)];
             let distance = ((Challenges::edit_distance_calculation(slice1,slice2) as f32) + (Challenges::edit_distance_calculation(slice1,slice3) as f32) + (Challenges::edit_distance_calculation(slice1,slice4) as f32) 
                           + (Challenges::edit_distance_calculation(slice2,slice3) as f32) + (Challenges::edit_distance_calculation(slice2,slice4) as f32) + (Challenges::edit_distance_calculation(slice3,slice4) as f32)) / (6f32 * i as f32);
-            
-            println!("Position: {}   distance: {}  slice1: {:#?}    slice2: {:#?}", i, distance, slice1, slice2);
             if lowest_distance >= distance {
                 lowest_distance = distance;
                 keysize = i;
             }
         }
-        println!("keysize: {}\n converted length: {}", keysize, converted.len());
-        //keysize = 29;
         let mut xored: Vec<u8> = Vec::new();
         let mut blocks: Vec<String> = Vec::new();
         for i in 0..keysize {
@@ -168,7 +164,6 @@ impl Challenges {
                 }
             }
             let (x,y) = Challenges::singlebyte_xor_cipher(&xored);
-            println!("block {}: {}", i, x);
             blocks.push(x);
             key.push(y as char);
             xored.clear();
@@ -181,7 +176,6 @@ impl Challenges {
                 }
             }
         }
-        println!("key: {:#?}", key);
 
         ans
     }

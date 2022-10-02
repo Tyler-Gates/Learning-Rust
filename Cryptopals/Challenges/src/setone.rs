@@ -2,12 +2,12 @@ use crate::conversions::Convert;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-pub struct Challenges;
+pub struct SetOne;
 
 
 //cryptopals rule: Always operate on raw bytes, not on enconded strings
 
-impl Challenges {
+impl SetOne {
 
     //used to decrypt a hex string that has been XOR'd against a single character to reveal a hidden message..
     //this takes a hex string, converts it to u8 hex vector, converts that to a u8 decimal vector, XOR's the result
@@ -58,13 +58,10 @@ impl Challenges {
         let hex1 = Convert::string_to_hex(string1.to_lowercase().as_bytes().to_vec());
         let hex2 = Convert::string_to_hex(string2.to_lowercase().as_bytes().to_vec());
         let mut xored: Vec<u8> = Vec::new();
-        let mut ans = String::new();
         for i in 0..hex1.len() {
             xored.push(hex1[i] ^ hex2[i]);
         }
-        let converted = Convert::hex_to_string(xored);
-        ans.push_str(std::str::from_utf8(&converted).unwrap());
-        ans
+        std::str::from_utf8(&xored).unwrap().to_string()
     }
 
     //takes a file location of a list of new line seperated hex strings that have been single byte XOR ciphered
@@ -79,7 +76,7 @@ impl Challenges {
         for line in content.lines() {
             let bytes = line.unwrap().to_lowercase().as_bytes().to_vec();
             let dec = Convert::hex_to_dec(Convert::string_to_hex(bytes));
-            let (dec,_) = Challenges::singlebyte_xor_cipher(&dec);
+            let (dec,_) = SetOne::singlebyte_xor_cipher(&dec);
             variations.push(dec);
         }
         //finds the highest likely deciphered string amongst all the deciphered strings.
@@ -116,7 +113,7 @@ impl Challenges {
                 repeat_index = 0;
             }
         }
-        std::string::String::from_utf8(Convert::hex_to_string(Convert::dec_to_hex(bytes))).unwrap()
+        std::string::String::from_utf8(Convert::hex_to_string(bytes)).unwrap()
     }
 
     pub fn edit_distance_calculation(string1: &str, string2: &str) -> u32 {
@@ -127,12 +124,7 @@ impl Challenges {
         for i in 0..string1.len() {
             let char1 = string1.chars().nth(i).unwrap() as u8;
             let char2 = string2.chars().nth(i).unwrap() as u8;
-            if char1 >= 32 && char1 <= 127 && char2 >= 32 && char2 <= 127 {
-                count = count + (char1 ^ char2).count_ones();
-            }
-            else {
-                count = count + ((char1 +32u8) ^ (char2+32u8)).count_ones();
-            }
+            count = count + (char1 ^ char2).count_ones();
         }
         count
     }
@@ -147,8 +139,8 @@ impl Challenges {
             let slice2 = &converted[i..(i*2)];
             let slice3 = &converted[(i*2)..(i*3)];
             let slice4 = &converted[(i*4)..(i*5)];
-            let distance = ((Challenges::edit_distance_calculation(slice1,slice2) as f32) + (Challenges::edit_distance_calculation(slice1,slice3) as f32) + (Challenges::edit_distance_calculation(slice1,slice4) as f32) 
-                          + (Challenges::edit_distance_calculation(slice2,slice3) as f32) + (Challenges::edit_distance_calculation(slice2,slice4) as f32) + (Challenges::edit_distance_calculation(slice3,slice4) as f32)) / (6f32 * i as f32);
+            let distance = ((SetOne::edit_distance_calculation(slice1,slice2) as f32) + (SetOne::edit_distance_calculation(slice1,slice3) as f32) + (SetOne::edit_distance_calculation(slice1,slice4) as f32) 
+                          + (SetOne::edit_distance_calculation(slice2,slice3) as f32) + (SetOne::edit_distance_calculation(slice2,slice4) as f32) + (SetOne::edit_distance_calculation(slice3,slice4) as f32)) / (6f32 * i as f32);
             if lowest_distance >= distance {
                 lowest_distance = distance;
                 keysize = i;
@@ -163,7 +155,7 @@ impl Challenges {
                     xored.push(converted.chars().nth(((j+1)*keysize) + i).unwrap() as u8);
                 }
             }
-            let (x,y) = Challenges::singlebyte_xor_cipher(&xored);
+            let (x,y) = SetOne::singlebyte_xor_cipher(&xored);
             blocks.push(x);
             key.push(y as char);
             xored.clear();
@@ -178,5 +170,21 @@ impl Challenges {
         }
 
         ans
+    }
+
+    pub fn ecb_decrypt(string: &str, key: &str) -> String {
+        let converted = Convert::base64_to_chars(string);
+        println!("CONVERTED: {}", converted);
+        let mut ans = String::new();
+        for i in 0..converted.len()/16{
+            let mut xored = String::new();
+            for j in 0..16 {
+                xored.push((converted.chars().nth((i*16)+j).unwrap() as u8 ^ key.chars().nth(j).unwrap() as u8) as char)
+            }
+            ans.push_str(&xored);
+        }
+        println!("{}", ans);
+
+        String::new()
     }
 }

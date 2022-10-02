@@ -22,10 +22,9 @@ impl Convert {
         let mut hex: Vec<u8> = Vec::new();
         for i in 0..dec.len() {
             let quotient = dec[i].clone();
-            let conversion = (quotient/16) % 16;
+            let conversion = (((quotient/16) % 16) << 4) + ((quotient % 16) >> 4);
             hex.push(conversion);
-            let conversion = quotient % 16;
-            hex.push(conversion);
+            println!("dec: {}  hex: {}", quotient, conversion);
         }
         hex
     }
@@ -35,87 +34,113 @@ impl Convert {
     pub fn hex_to_dec(bytes: Vec<u8>) -> Vec<u8> {
         let mut i = 1;
         let mut dec: Vec<u8> = Vec::new();
-        while i < bytes.len() {
+        for i in 0..bytes.len() {
             //take behind 1 and current to form a complete byte.
             //we are going to use this to form a decimal value
-            let temp = (bytes[i-1] * 16u8) + (bytes[i]);
+            let temp = ((bytes[i]>> 4) * 16u8) + ((bytes[i] << 4) >> 4);
             dec.push(temp);
-            i=i+2
         }
         dec
     }
 
     //converts hexadecimal u8 to ascii values for readability.
     pub fn hex_to_string(mut bytes: Vec<u8>) -> Vec<u8> {
-        for i in 0..bytes.len() {
-            if bytes[i] >=10  && bytes[i] <= 15 {
-                match bytes[i] {
-                    10 => bytes[i] = 97,
-                    11 => bytes[i] = 98,
-                    12 => bytes[i] = 99,
-                    13 => bytes[i] = 100,
-                    14 => bytes[i] = 101,
-                    15 => bytes[i] = 102,
+        let mut hex: Vec<u8> = Vec::new();
+        let mut i = 0;
+        let mut bits = 0u8;
+        let mut left = true;
+        while i < bytes.len() {
+            bits = if left {bytes[i] >> 4} else {(bytes[i] << 4) >> 4};
+            if bits >= 10u8  && bits <= 15u8 {
+                match bits {
+                    10u8 => hex.push(97u8),
+                    11u8 => hex.push(98u8),
+                    12u8 => hex.push(99u8),
+                    13u8 => hex.push(100u8),
+                    14u8 => hex.push(101u8),
+                    15u8 => hex.push(102u8),
                     _ => ()
                 }
             }
-            else if bytes[i] <= 9 {
-                match bytes[i] {
-                    0 => bytes[i] = 48,
-                    1 => bytes[i] = 49,
-                    2 => bytes[i] = 50,
-                    3 => bytes[i] = 51,
-                    4 => bytes[i] = 52,
-                    5 => bytes[i] = 53,
-                    6 => bytes[i] = 54,
-                    7 => bytes[i] = 55,
-                    8 => bytes[i] = 56,
-                    9 => bytes[i] = 57,
+            else if bits <= 9u8 {
+                match bits {
+                    0u8 => hex.push(48u8),
+                    1u8 => hex.push(49u8),
+                    2u8 => hex.push(50u8),
+                    3u8 => hex.push(51u8),
+                    4u8 => hex.push(52u8),
+                    5u8 => hex.push(53u8),
+                    6u8 => hex.push(54u8),
+                    7u8 => hex.push(55u8),
+                    8u8 => hex.push(56u8),
+                    9u8 => hex.push(57u8),
                     _ => ()
                 }
             }
             else {
                 panic!("String contains non-hex characters!")
             }
+            if !left {
+                i = i +1;
+            }
+            left = !left;
         }
-        bytes
+        hex
     }
 
-    //when you convert a string to bytes, it returns as base 10, needs to be converted to base 16 for hexadecimal strings
-    //all inputs into this function assume they have valid hex characters, will PANIC otherwise
+    pub fn string_to_hex_helper(mut temp: u8, iterator: &usize, value: u8) -> u8 {
+        if iterator % 2 == 0 {
+            temp = temp + (value << 4);
+        }
+        else {
+            temp = temp + value;
+        }
+        temp
+    }
+
+    //convert hex encoded string to actual hex
     pub fn string_to_hex(mut bytes: Vec<u8>) -> Vec<u8> {
+        let mut hex: Vec<u8> = Vec::new();
+        let mut temp = 0u8;
         for i in 0..bytes.len() {
             if bytes[i] >=97  && bytes[i] <= 102 {
                 match bytes[i] {
-                    97 => bytes[i] = 10,
-                    98 => bytes[i] = 11,
-                    99 => bytes[i] = 12,
-                    100 => bytes[i] = 13,
-                    101 => bytes[i] = 14,
-                    102 => bytes[i] = 15,
+                    97 => temp = Convert::string_to_hex_helper(temp,&i,10),
+                    98 => temp = Convert::string_to_hex_helper(temp,&i,11),
+                    99 => temp = Convert::string_to_hex_helper(temp,&i,12),
+                    100 => temp = Convert::string_to_hex_helper(temp,&i,13),
+                    101 => temp = Convert::string_to_hex_helper(temp,&i,14),
+                    102 => temp = Convert::string_to_hex_helper(temp,&i,15),
                     _ => ()
                 }
             }
             else if bytes[i] >= 48  && bytes[i] <= 57 {
                 match bytes[i] {
-                    48 => bytes[i] = 0,
-                    49 => bytes[i] = 1,
-                    50 => bytes[i] = 2,
-                    51 => bytes[i] = 3,
-                    52 => bytes[i] = 4,
-                    53 => bytes[i] = 5,
-                    54 => bytes[i] = 6,
-                    55 => bytes[i] = 7,
-                    56 => bytes[i] = 8,
-                    57 => bytes[i] = 9,
+                    48 => temp = Convert::string_to_hex_helper(temp,&i,0),
+                    49 => temp = Convert::string_to_hex_helper(temp,&i,1),
+                    50 => temp = Convert::string_to_hex_helper(temp,&i,2),
+                    51 => temp = Convert::string_to_hex_helper(temp,&i,3),
+                    52 => temp = Convert::string_to_hex_helper(temp,&i,4),
+                    53 => temp = Convert::string_to_hex_helper(temp,&i,5),
+                    54 => temp = Convert::string_to_hex_helper(temp,&i,6),
+                    55 => temp = Convert::string_to_hex_helper(temp,&i,7),
+                    56 => temp = Convert::string_to_hex_helper(temp,&i,8),
+                    57 => temp = Convert::string_to_hex_helper(temp,&i,9),
                     _ => ()
                 }
             }
             else {
-                panic!("String contains non-hex characters!")
+                panic!("String contains non-hex characters!");
+            }
+            if i % 2 != 0 {
+                hex.push(temp);
+                temp = 0u8;
+            }
+            else if i == bytes.len()-1{
+                panic!("Must be hexadecimal String!");
             }
         }
-        bytes
+        hex
     }
 
     //Takes a string that is Hex encoded and converts it to a correct hex byte medium then is bit manipulated into base64.
@@ -123,53 +148,44 @@ impl Convert {
     pub fn hex_to_base64(string: &str) -> String {
         let bytes = string.to_lowercase().as_bytes().to_vec();
         let hex = Convert::string_to_hex(bytes);
+
         let mut ans = String::new();
-        let mut i = 1;
+        let mut i = 0;
         while i < hex.len() {
-            //Grabs the first base64 byte by combining the first 4 of the first byte and last 2 of the second byte
-            //Hexadecimal utilizes 4 bits, this example ignore the unused 4 bits. Each pair of *s are a new base 64 byte.
-            //Base64 utilize 6 bits, leaving the last 2 as unused.
-            // *0000 00*00 
-            let byte = (hex[i-1] << 2) + (hex[i] >> 2);
+
+            // *000000*00 
+            let byte = (hex[i] >> 2);
             ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&(byte)]);
-            //if the end is reached, utilize the remaining bits,add padding to 24 bits, and break.
+
+            //if the end is reached, utilize the remaining bits, add padding to 24 bits, and break.
             if i+1 >= hex.len() {
-                ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&(hex[i] << 4)]);
+                ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&((hex[i] << 6) >> 2)]);
                 ans.push(Convert::PADDING);
                 ans.push(Convert::PADDING);
                 break;
             }
 
-            // *0000 00*00 0000* now on the second base64 byte
-            let prev = hex[i] << 6;
-            let byte = (prev >> 2) + (hex[i+1]);
+            // *000000*00 0000*0000
+            let prev = (hex[i] << 6) >> 2;
+            let byte = prev + (hex[i+1] >> 4);
             ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&byte]);
 
+            //if the end is reached, utilize the remaining bits, add padding to 24 bits, and break.
             if i+2 >= hex.len() {
-                panic!("Must be Hexadecimal String! (two characters per hexadecimal value)")
-            }
-
-            //if the end is reached, utilize the remaining bits,add padding to 24 bits, and break.
-            if i+3 >= hex.len() {
-                ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&(hex[i+2] << 2)]);
+                ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&((hex[i+1] << 4) >> 2)]);
                 ans.push(Convert::PADDING);
                 break;
             }
-                
-            // *0000 00*00 0000* 0000 00*00 now on the third base64 byte
-            let byte = (hex[i+2] << 2) + (hex[i+3] >> 2);
+
+            // *000000*00 0000*0000 00*000000
+            let byte = ((hex[i+1] << 4) >> 2) + (hex[i+2] >> 6);
             ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&byte]);
 
-            if i+4 >= hex.len() {
-                panic!("Must be Hexadecimal String! (two characters per hexadecimal value)")
-            }
-
-            // *0000 00*00 0000* 0000 00*00 0000* now on the fourth base64 byte
-            let prev = hex[i+3] << 6;
-            let byte = (prev >> 2) + (hex[i+4]);
+            // *000000*00 0000*0000 00*000000
+            let byte = (hex[i+2] << 2) >> 2;
             ans.push(Convert::BASE64_TO_CHAR_HASHMAP[&byte]);
 
-            i=i+6;
+            i=i+3;
         }
         ans
     }

@@ -20,7 +20,7 @@ impl Challenges {
             let mut temp: Vec<u8> = Vec::new();
             let mut count = 0;
             for j in  0..string.len() {
-                //XORs the decimal value if it's a valid character
+                //XORs the decimal value and wraps it around 32..127 until it's withing range of a printable character
                 let mut xor = string[j] ^ i;
                 if xor < 32 {
                     xor = xor + 32;
@@ -120,50 +120,54 @@ impl Challenges {
     }
 
     pub fn edit_distance_calculation(string1: &str, string2: &str) -> u32 {
-        let mut count = (((string1.len() - string2.len()) as i32).abs() as u32) * 8;
-        let mut length = if string1.len() > string2.len() { string2.len() } else { string1.len() };
-        for i in 0..length {
-            let char1 = string1.chars().nth(i).unwrap();
-            let char2 = string2.chars().nth(i).unwrap();
-            count = count + ((char1 as u8) ^ (char2 as u8)).count_ones();
+        let mut count = 0;
+        if string1.len() != string2.len() {
+            panic!("Inequal string lengths for hamming distance calculation!");
+        }
+        for i in 0..string1.len() {
+            let char1 = string1.chars().nth(i).unwrap() as u8;
+            let char2 = string2.chars().nth(i).unwrap() as u8;
+            if char1 >= 32 && char1 <= 127 && char2 >= 32 && char2 <= 127 {
+                count = count + (char1 ^ char2).count_ones();
+            }
+            else {
+                count = count + ((char1 +32u8) ^ (char2+32u8)).count_ones();
+            }
         }
         count
     }
 
     pub fn break_repeatkey_xor(string: &str) -> String{
         let converted = Convert::base64_to_chars(string);
-        let mut lowest_distance = u32::MAX;
+        let mut lowest_distance = f32::MAX;
         let mut key = String::new();
         let mut keysize = 0;
-        let mut slice1 = "";
-        let mut slice2 = "";
         for i in 2..=40 {
-            if converted.len() > i {
-                slice1 = &converted[0..i];
-            }
-            else{
-                slice1="";
-            }
-            if converted.len() > i*2 {
-                slice2 = &converted[i..(i*2)];
-            }
-            else{
-                slice2="";
-            }
-            let distance = Challenges::edit_distance_calculation(slice1,slice2) / i as u32;
-            if lowest_distance > distance {
+            let slice1 = &converted[0..i];
+            let slice2 = &converted[i..(i*2)];
+            let slice3 = &converted[(i*2)..(i*3)];
+            let slice4 = &converted[(i*4)..(i*5)];
+            let distance = ((Challenges::edit_distance_calculation(slice1,slice2) as f32) + (Challenges::edit_distance_calculation(slice1,slice3) as f32) + (Challenges::edit_distance_calculation(slice1,slice4) as f32) 
+                          + (Challenges::edit_distance_calculation(slice2,slice3) as f32) + (Challenges::edit_distance_calculation(slice2,slice4) as f32) + (Challenges::edit_distance_calculation(slice3,slice4) as f32)) / (6f32 * i as f32);
+            
+            println!("Position: {}   distance: {}  slice1: {:#?}    slice2: {:#?}", i, distance, slice1, slice2);
+            if lowest_distance >= distance {
                 lowest_distance = distance;
                 keysize = i;
             }
         }
-        println!("keysize: {}", keysize);
-        let mut xored = String::new();
+        println!("keysize: {}\n converted length: {}", keysize, converted.len());
+        //keysize = 29;
+        let mut xored: Vec<u8> = Vec::new();
         let mut blocks: Vec<String> = Vec::new();
         for i in 0..keysize {
             for j in 0..converted.len()/keysize {
-                xored.push(converted.chars().nth((j*keysize)+i).unwrap());
+                xored.push(converted.chars().nth((j*keysize)+i).unwrap() as u8);
+                if (j == converted.len()/keysize - 1) && (((j+1)*keysize) + i < converted.len()) {
+                    xored.push(converted.chars().nth(((j+1)*keysize) + i).unwrap() as u8);
+                }
             }
-            let (x,y) = Challenges::singlebyte_xor_cipher(&xored.as_bytes().to_vec());
+            let (x,y) = Challenges::singlebyte_xor_cipher(&xored);
             println!("block {}: {}", i, x);
             blocks.push(x);
             key.push(y as char);

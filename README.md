@@ -8,8 +8,7 @@ Hi! This is where I'm keeping track of what and how I'm learning Rust! The first
 
 - [✨The Book✨](https://doc.rust-lang.org/book/) is the official Rust Programming Language book that is installed with rust! `rustup doc`
 - [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/): This project only gives unit tests and relevant reading material to create a CLI PNG hidden message encoder/decoder
-- **NOTE: As of 10/4/22 I have decided to pivot from cryptopals.. While the challenges are thought provoking and enjoyable, I am spending more time learning about modern day cryptographic constructs than RUST, which was the goal of this repo! I will come back to conquer, but must stay on course**
-- [Cryptopals Crypto Challenges](https://cryptopals.com/) are a series of coding challenge sets that are derived from weaknesses in real world systems and modern cryptographic constructions.
+- [Cryptopals Crypto Challenges](https://cryptopals.com/) are a series of coding challenge sets that are derived from weaknesses in real world systems and modern cryptographic constructions. **NOTE: As of 10/4/22 I have decided to pivot from cryptopals.. While the challenges are thought provoking and enjoyable, I am spending more time learning about modern day cryptographic constructs than RUST, which was the goal of this repo! I will come back to conquer, but must stay on course**
 - [Leetcode account](https://leetcode.com/TylerGates/)
 
 ## ✨The Book✨

@@ -4,7 +4,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 mod setone;
-mod conversions; 
+mod conversions;
 
 fn main() {
     //Set One

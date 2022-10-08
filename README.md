@@ -86,3 +86,4 @@ Outline of Chapters:
 7. Hashes
 
 8. Abstract Algebra
+## Conway's Game of Life ✔️[10/7/22]

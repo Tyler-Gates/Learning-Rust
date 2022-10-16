@@ -1,6 +1,6 @@
 use std::fmt;
 use wasm_bindgen::prelude::*;
-
+use js_sys::Math::*;
 
 
 
@@ -13,8 +13,22 @@ pub struct Board {
 
 #[wasm_bindgen]
 impl Board {
-    pub fn random_board(width: u32, height:u32) -> Board {
-        Board::random_state_instantiation(width,height)
+    pub fn random_state_instantiation(width: u32, height: u32) -> Board {
+        let mut board: Vec<Vec<bool>> = Vec::new();
+        for i in 0..height {
+            let mut temp = Vec::new();
+            for j in 0..width {
+                let random = js_sys::Math::floor(js_sys::Math::random() * 2.0) as usize;
+                if random == 1 {
+                    temp.push(true);
+                }
+                else {
+                    temp.push(false);
+                }
+            }
+            board.push(temp);
+        }
+        Board { board, width, height }
     }
 
     pub fn width(&self) -> u32 {
@@ -27,56 +41,6 @@ impl Board {
 
     pub fn board(&self) -> String {
         self.to_string()
-    }
-}
-
-impl fmt::Display for Board {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut filledin = String::new();
-        for i in 0..self.height {
-            for j in 0..self.width {
-              if self.board[i as usize][j as usize] == true {
-                write!(f, "{}", '◼');
-              }
-              else {
-                write!(f, "{}", '◻');
-              }
-            }
-            write!(f, "{}", '\n');
-          }
-          
-
-        Ok(())
-    }
-}
-
-impl Board {
-    pub fn custom_instantiation(board: Vec<Vec<bool>>) -> Board {
-        Board { width: board.len() as u32 , height: board[0].len() as u32, board }
-    }
-
-    pub fn random_state_instantiation(width: u32, height: u32) -> Board {
-        let mut board: Vec<Vec<bool>> = Vec::new();
-        for i in 0..height {
-            let mut temp = Vec::new();
-            for j in 0..width {
-                temp.push(true);
-            }
-            board.push(temp);
-        }
-        Board { board, width, height }
-    }
-
-    pub fn dead_state_instantiation(width: u32, height: u32) -> Board {
-        let mut board: Vec<Vec<bool>> = Vec::new();
-        for i in 0..height {
-            let mut temp = Vec::new();
-            for j in 0..width {
-                temp.push(false);
-            }
-            board.push(temp);
-        }
-        Board { board, width, height }
     }
 
     pub fn next_board_state(mut self) -> Self {
@@ -104,6 +68,12 @@ impl Board {
                     if self.board[i+1][j] {
                         count = count + 1;
                     }
+                    if self.board[i][self.width as usize-1] {
+                        count = count + 1;
+                    }
+                    if self.board[i+1][self.width as usize-1] {
+                        count = count + 1;
+                    }
                 }
                 else if top && right {
                     if self.board[i][j-1] {
@@ -113,6 +83,12 @@ impl Board {
                         count = count + 1;
                     }
                     if self.board[i+1][j] {
+                        count = count + 1;
+                    }
+                    if self.board[i][0] {
+                        count = count + 1;
+                    }
+                    if self.board[i+1][0] {
                         count = count + 1;
                     }
                 }
@@ -126,6 +102,12 @@ impl Board {
                     if self.board[i-1][j] {
                         count = count + 1;
                     }
+                    if self.board[i][0] {
+                        count = count + 1;
+                    }
+                    if self.board[i-1][0] {
+                        count = count + 1;
+                    }
                 }
                 else if bottom && left {
                     if self.board[i][j+1] {
@@ -135,6 +117,12 @@ impl Board {
                         count = count + 1;
                     }
                     if self.board[i-1][j] {
+                        count = count + 1;
+                    }
+                    if self.board[i][self.width as usize-1] {
+                        count = count + 1;
+                    }
+                    if self.board[i-1][self.width as usize-1] {
                         count = count + 1;
                     }
                 }
@@ -154,6 +142,15 @@ impl Board {
                     if self.board[i][j-1] {
                         count = count + 1;
                     }
+                    if self.board[self.height as usize-1][j] {
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize-1][j+1] {
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize-1][j-1] {
+                        count = count + 1;
+                    }
                 }
                 else if bottom {
                     if self.board[i-1][j] {
@@ -169,6 +166,15 @@ impl Board {
                         count = count + 1;
                     }
                     if self.board[i][j-1] {
+                        count = count + 1;
+                    }
+                    if self.board[0][j] {
+                        count = count + 1;
+                    }
+                    if self.board[0][j+1] {
+                        count = count + 1;
+                    }
+                    if self.board[0][j-1] {
                         count = count + 1;
                     }
                 }
@@ -188,6 +194,15 @@ impl Board {
                     if self.board[i+1][j] {
                         count = count + 1;
                     }
+                    if self.board[i-1][0] {
+                        count = count + 1;
+                    }
+                    if self.board[i][0] {
+                        count = count + 1;
+                    }
+                    if self.board[i+1][0] {
+                        count = count + 1;
+                    }
                 }
                 else if left {
                     if self.board[i-1][j] {
@@ -203,6 +218,15 @@ impl Board {
                         count = count + 1;
                     }
                     if self.board[i+1][j] {
+                        count = count + 1;
+                    }
+                    if self.board[i-1][self.width as usize - 1] {
+                        count = count + 1;
+                    }
+                    if self.board[i][self.width as usize - 1] {
+                        count = count + 1;
+                    }
+                    if self.board[i+1][self.width as usize - 1] {
                         count = count + 1;
                     }
                 }
@@ -254,6 +278,44 @@ impl Board {
         }
         self.board = newboard;
         self
+    }
+}
+
+impl fmt::Display for Board {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut filledin = String::new();
+        for i in 0..self.height {
+            for j in 0..self.width {
+              if self.board[i as usize][j as usize] == true {
+                write!(f, "{}", '1');
+              }
+              else {
+                write!(f, "{}", '0');
+              }
+            }
+            write!(f, "{}", '\n');
+          }
+          
+
+        Ok(())
+    }
+}
+
+impl Board {
+    pub fn custom_instantiation(board: Vec<Vec<bool>>) -> Board {
+        Board { width: board.len() as u32 , height: board[0].len() as u32, board }
+    }
+
+    pub fn dead_state_instantiation(width: u32, height: u32) -> Board {
+        let mut board: Vec<Vec<bool>> = Vec::new();
+        for i in 0..height {
+            let mut temp = Vec::new();
+            for j in 0..width {
+                temp.push(false);
+            }
+            board.push(temp);
+        }
+        Board { board, width, height }
     }
 
 }

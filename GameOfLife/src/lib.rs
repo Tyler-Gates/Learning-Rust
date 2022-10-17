@@ -31,6 +31,23 @@ impl Board {
         Board { board, width, height }
     }
 
+    pub fn dead_state_instantiation(width: u32, height: u32) -> Board {
+        let mut board: Vec<Vec<bool>> = Vec::new();
+        for i in 0..height {
+            let mut temp = Vec::new();
+            for j in 0..width {
+                temp.push(false);
+            }
+            board.push(temp);
+        }
+        Board { board, width, height }
+    }
+
+    pub fn set_cell(mut self, x: usize, y: usize) -> Self {
+        self.board[y][x] = !self.board[y][x];
+        self
+    }
+
     pub fn width(&self) -> u32 {
         self.width
     }
@@ -74,6 +91,16 @@ impl Board {
                     if self.board[i+1][self.width as usize-1] {
                         count = count + 1;
                     }
+                    if self.board[self.height as usize -1][j] {
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][j+1] {
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][self.width as usize -1] {
+                        count = count + 1;
+                    }
+                    
                 }
                 else if top && right {
                     if self.board[i][j-1] {
@@ -89,6 +116,15 @@ impl Board {
                         count = count + 1;
                     }
                     if self.board[i+1][0] {
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][j] {
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][j-1] {
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][0] {
                         count = count + 1;
                     }
                 }
@@ -108,6 +144,15 @@ impl Board {
                     if self.board[i-1][0] {
                         count = count + 1;
                     }
+                    if self.board[0][j] {
+                        count = count + 1;
+                    }
+                    if self.board[0][j-1] {
+                        count = count + 1;
+                    }
+                    if self.board[0][0] {
+                        count = count + 1;
+                    }
                 }
                 else if bottom && left {
                     if self.board[i][j+1] {
@@ -123,6 +168,15 @@ impl Board {
                         count = count + 1;
                     }
                     if self.board[i-1][self.width as usize-1] {
+                        count = count + 1;
+                    }
+                    if self.board[0][j] {
+                        count = count + 1;
+                    }
+                    if self.board[0][j+1] {
+                        count = count + 1;
+                    }
+                    if self.board[0][self.width as usize-1] {
                         count = count + 1;
                     }
                 }
@@ -306,18 +360,6 @@ impl Board {
         Board { width: board.len() as u32 , height: board[0].len() as u32, board }
     }
 
-    pub fn dead_state_instantiation(width: u32, height: u32) -> Board {
-        let mut board: Vec<Vec<bool>> = Vec::new();
-        for i in 0..height {
-            let mut temp = Vec::new();
-            for j in 0..width {
-                temp.push(false);
-            }
-            board.push(temp);
-        }
-        Board { board, width, height }
-    }
-
 }
 
 // impl fmt::Display for Board {
@@ -390,8 +432,8 @@ mod tests {
                                  vec![false,true,true],
                                  vec![false,false,false]];
 
-        let mut nextboard = vec![vec![false,true,true],
-                                 vec![false,true,true],
+        let mut nextboard = vec![vec![true,true,true],
+                                 vec![true,true,true],
                                  vec![false,false,false]];
         let mut game = Board::custom_instantiation(threeboard);
         game = game.next_board_state();

@@ -9,6 +9,7 @@ pub struct Board {
     board: Vec<Vec<u8>>,
     width: u32,
     height: u32,
+    death: bool,
 }
 
 #[wasm_bindgen]
@@ -20,7 +21,7 @@ impl Board {
             for j in 0..width {
                 let random = js_sys::Math::floor(js_sys::Math::random() * 2.0) as usize;
                 if random == 1 {
-                    temp.push(1);
+                    temp.push(2);
                 }
                 else {
                     temp.push(0);
@@ -28,7 +29,7 @@ impl Board {
             }
             board.push(temp);
         }
-        Board { board, width, height }
+        Board { board, width, height, death: false }
     }
 
     pub fn dead_state_instantiation(width: u32, height: u32) -> Board {
@@ -40,16 +41,21 @@ impl Board {
             }
             board.push(temp);
         }
-        Board { board, width, height }
+        Board { board, width, height, death: false }
     }
 
     pub fn set_cell(mut self, x: usize, y: usize) -> Self {
-        if self.board[y][x] == 0 || self.board[y][x] == 2{
-            self.board[y][x] = 1;
+        if self.board[y][x] == 0 || self.board[y][x] == 1{
+            self.board[y][x] = 2;
         }
         else {
             self.board[y][x] = 0;
         }
+        self
+    }
+
+    pub fn death_only(mut self) -> Self {
+        self.death = !self.death;
         self
     }
 
@@ -81,262 +87,262 @@ impl Board {
                 right = j == self.board[0].len() - 1;
                 bottom = i == self.board.len() - 1;
                 if top && left {
-                    if self.board[i][j+1] == 1 {
+                    if self.board[i][j+1] ==  2 {
                         count = count + 1;
                     }
-                    if self.board[i+1][j+1] == 1{
+                    if self.board[i+1][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j] == 1{
+                    if self.board[i+1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][self.width as usize-1] == 1{
+                    if self.board[i][self.width as usize-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][self.width as usize-1] == 1{
+                    if self.board[i+1][self.width as usize-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[self.height as usize -1][j] == 1{
+                    if self.board[self.height as usize -1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[self.height as usize -1][j+1] == 1{
+                    if self.board[self.height as usize -1][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[self.height as usize -1][self.width as usize -1] == 1{
+                    if self.board[self.height as usize -1][self.width as usize -1] ==  2{
                         count = count + 1;
                     }
                     
                 }
                 else if top && right {
-                    if self.board[i][j-1] == 1{
+                    if self.board[i][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j-1] == 1{
+                    if self.board[i+1][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j] == 1{
+                    if self.board[i+1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][0] == 1{
+                    if self.board[i][0] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][0] == 1{
+                    if self.board[i+1][0] ==  2{
                         count = count + 1;
                     }
-                    if self.board[self.height as usize -1][j] == 1{
+                    if self.board[self.height as usize -1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[self.height as usize -1][j-1] == 1{
+                    if self.board[self.height as usize -1][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[self.height as usize -1][0] == 1{
+                    if self.board[self.height as usize -1][0] ==  2{
                         count = count + 1;
                     }
                 }
                 else if bottom && right {
-                    if self.board[i][j-1] == 1{
+                    if self.board[i][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j-1] == 1{
+                    if self.board[i-1][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j] == 1{
+                    if self.board[i-1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][0] == 1{
+                    if self.board[i][0] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][0] == 1{
+                    if self.board[i-1][0] ==  2{
                         count = count + 1;
                     }
-                    if self.board[0][j] == 1{
+                    if self.board[0][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[0][j-1] == 1{
+                    if self.board[0][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[0][0] == 1{
+                    if self.board[0][0] ==  2{
                         count = count + 1;
                     }
                 }
                 else if bottom && left {
-                    if self.board[i][j+1] == 1{
+                    if self.board[i][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j+1] == 1{
+                    if self.board[i-1][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j] == 1{
+                    if self.board[i-1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][self.width as usize-1] == 1{
+                    if self.board[i][self.width as usize-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][self.width as usize-1] == 1{
+                    if self.board[i-1][self.width as usize-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[0][j] == 1{
+                    if self.board[0][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[0][j+1] == 1{
+                    if self.board[0][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[0][self.width as usize-1] == 1{
+                    if self.board[0][self.width as usize-1] ==  2{
                         count = count + 1;
                     }
                 }
                 else if top {
-                    if self.board[i+1][j] == 1{
+                    if self.board[i+1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j+1] == 1{
+                    if self.board[i+1][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j-1] == 1{
+                    if self.board[i+1][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][j+1] == 1{
+                    if self.board[i][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][j-1] == 1{
+                    if self.board[i][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[self.height as usize-1][j] == 1{
+                    if self.board[self.height as usize-1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[self.height as usize-1][j+1] == 1{
+                    if self.board[self.height as usize-1][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[self.height as usize-1][j-1] == 1{
+                    if self.board[self.height as usize-1][j-1] ==  2{
                         count = count + 1;
                     }
                 }
                 else if bottom {
-                    if self.board[i-1][j] == 1{
+                    if self.board[i-1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j+1] == 1{
+                    if self.board[i-1][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j-1] == 1{
+                    if self.board[i-1][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][j+1] == 1{
+                    if self.board[i][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][j-1] == 1{
+                    if self.board[i][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[0][j] == 1{
+                    if self.board[0][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[0][j+1] == 1{
+                    if self.board[0][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[0][j-1] == 1{
+                    if self.board[0][j-1] ==  2{
                         count = count + 1;
                     }
                 }
                 else if right {
-                    if self.board[i-1][j] == 1{
+                    if self.board[i-1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j-1] == 1{
+                    if self.board[i-1][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][j-1] == 1{
+                    if self.board[i][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j-1] == 1{
+                    if self.board[i+1][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j] == 1{
+                    if self.board[i+1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][0] == 1{
+                    if self.board[i-1][0] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][0] == 1{
+                    if self.board[i][0] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][0] == 1{
+                    if self.board[i+1][0] ==  2{
                         count = count + 1;
                     }
                 }
                 else if left {
-                    if self.board[i-1][j] == 1{
+                    if self.board[i-1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j+1] == 1{
+                    if self.board[i-1][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][j+1] == 1{
+                    if self.board[i][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j+1] == 1{
+                    if self.board[i+1][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j] == 1{
+                    if self.board[i+1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][self.width as usize - 1] == 1{
+                    if self.board[i-1][self.width as usize - 1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][self.width as usize - 1] == 1{
+                    if self.board[i][self.width as usize - 1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][self.width as usize - 1] == 1{
+                    if self.board[i+1][self.width as usize - 1] ==  2{
                         count = count + 1;
                     }
                 }
                 else {
-                    if self.board[i-1][j] == 1{
+                    if self.board[i-1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j-1] == 1{
+                    if self.board[i-1][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][j-1] == 1{
+                    if self.board[i][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j-1] == 1{
+                    if self.board[i+1][j-1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j] == 1{
+                    if self.board[i+1][j] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i+1][j+1] == 1{
+                    if self.board[i+1][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i][j+1] == 1{
+                    if self.board[i][j+1] ==  2{
                         count = count + 1;
                     }
-                    if self.board[i-1][j+1] == 1{
+                    if self.board[i-1][j+1] ==  2{
                         count = count + 1;
                     }
                 }
                 if count <= 1 {
-                    if self.board[i][j] == 1 {
-                        temp.push(2);
+                    if self.board[i][j] == 2 {
+                        temp.push(1);
                     }
                     else{
                         temp.push(0);
                     }
                 }
                 else if count == 2 {
-                    if self.board[i][j] == 1 {
-                        temp.push(1);
+                    if self.board[i][j] == 2 {
+                        temp.push(2);
                     }
                     else {
                         temp.push(0);
                     }
                 }
                 else if count == 3 {
-                    temp.push(1);
+                    temp.push(2);
                 }
                 else if count > 3 {
-                    if self.board[i][j] == 1 {
-                        temp.push(2);
+                    if self.board[i][j] == 2 {
+                        temp.push(1);
                     }
                     else{
                         temp.push(0);
@@ -346,6 +352,7 @@ impl Board {
             newboard.push(temp);
         }
         self.board = newboard;
+        self = self.get_new_cells();
         self
     }
 }
@@ -355,11 +362,14 @@ impl fmt::Display for Board {
         let mut filledin = String::new();
         for i in 0..self.height {
             for j in 0..self.width {
-              if self.board[i as usize][j as usize] == 1 {
-                write!(f, "{}", '1');
-              }
-              else if self.board[i as usize][j as usize] == 2{
+              if self.board[i as usize][j as usize] == 2 {
                 write!(f, "{}", '2');
+              }
+              else if self.board[i as usize][j as usize] == 3{
+                write!(f, "{}", '3');
+              }
+              else if self.board[i as usize][j as usize] == 1{
+                write!(f, "{}", '1');
               }
               else {
                 write!(f, "{}", '0');
@@ -375,7 +385,274 @@ impl fmt::Display for Board {
 
 impl Board {
     pub fn custom_instantiation(board: Vec<Vec<u8>>) -> Board {
-        Board { width: board.len() as u32 , height: board[0].len() as u32, board }
+        Board { width: board.len() as u32 , height: board[0].len() as u32, board, death: false }
+    }
+
+    fn get_new_cells(mut self) -> Self {
+        let mut top = false;
+        let mut left = false;
+        let mut right = false;
+        let mut bottom = false;
+
+        for i in 0..self.board.len() {
+            for j in 0..self.board[0].len() {
+                let mut count = 0;
+                left = j == 0;
+                top = i == 0;
+                right = j == self.board[0].len() - 1;
+                bottom = i == self.board.len() - 1;
+                if top && left {
+                    if self.board[i][j+1] ==  2 {
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][self.width as usize-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][self.width as usize-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][self.width as usize -1] ==  2{
+                        count = count + 1;
+                    }
+                    
+                }
+                else if top && right {
+                    if self.board[i][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][0] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][0] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize -1][0] ==  2{
+                        count = count + 1;
+                    }
+                }
+                else if bottom && right {
+                    if self.board[i][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][0] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][0] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[0][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[0][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[0][0] ==  2{
+                        count = count + 1;
+                    }
+                }
+                else if bottom && left {
+                    if self.board[i][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][self.width as usize-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][self.width as usize-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[0][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[0][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[0][self.width as usize-1] ==  2{
+                        count = count + 1;
+                    }
+                }
+                else if top {
+                    if self.board[i+1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize-1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize-1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[self.height as usize-1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                }
+                else if bottom {
+                    if self.board[i-1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[0][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[0][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[0][j-1] ==  2{
+                        count = count + 1;
+                    }
+                }
+                else if right {
+                    if self.board[i-1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][0] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][0] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][0] ==  2{
+                        count = count + 1;
+                    }
+                }
+                else if left {
+                    if self.board[i-1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][self.width as usize - 1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][self.width as usize - 1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][self.width as usize - 1] ==  2{
+                        count = count + 1;
+                    }
+                }
+                else {
+                    if self.board[i-1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j-1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i+1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i][j+1] ==  2{
+                        count = count + 1;
+                    }
+                    if self.board[i-1][j+1] ==  2{
+                        count = count + 1;
+                    }
+                }
+                if count == 3 {
+                    if self.death {
+                        if self.board[i][j] == 0 {
+                            self.board[i].remove(j);
+                            self.board[i].insert(j,3);
+                        }
+                    }
+                    else {
+                        if self.board[i][j] != 2 {
+                            self.board[i].remove(j);
+                            self.board[i].insert(j,3);
+                        }
+                    }
+                }
+            }
+        }
+        self
     }
 
 }

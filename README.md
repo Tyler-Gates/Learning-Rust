@@ -10,7 +10,7 @@ Hi! This is where I'm keeping track of what and how I'm learning Rust! The first
 - [PNGme: An Intermediate Rust Project](https://picklenerd.github.io/pngme_book/): This project only gives unit tests and relevant reading material to create a CLI PNG hidden message encoder/decoder
 - [Cryptopals Crypto Challenges](https://cryptopals.com/) are a series of coding challenge sets that are derived from weaknesses in real world systems and modern cryptographic constructions. **NOTE: As of 10/4/22 I have decided to pivot from cryptopals.. While the challenges are thought provoking and enjoyable, I am spending more time learning about modern day cryptographic constructs than RUST, which was the goal of this repo! I will come back to conquer, but must stay on course**
 - [Conway's Game of Life](https://robertheaton.com/2018/07/20/project-2-game-of-life/): The classic cellular automaton! A system of cells that live on a grid, where they live, die and evolve according to the rules that govern their world!! Life’s simple, elegant rules give rise to astonishingly complex emergent behavior. It is played on a 2-D grid. Each square in the grid contains a cell, and each cell starts the game as either “alive” or “dead”. 
-- [Leetcode account](https://leetcode.com/TylerGates/)
+- CHESS - Creating Chess in Rust and javascript for my site !
 
 ## ✨The Book✨
 
@@ -87,3 +87,5 @@ Outline of Chapters:
 
 8. Abstract Algebra
 ## Conway's Game of Life ✔️[10/7/22]
+1. Base game ✔️[10/7/22]
+2. On my website ✔️[10/16/22]

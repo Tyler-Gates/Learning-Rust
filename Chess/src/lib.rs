@@ -27,13 +27,61 @@ pub enum Piece {
 impl Piece {
     pub fn get_color(&self) -> &Color {
         match self {
-            Piece::K(f) => {return f.get_color();}
-            Piece::Q(f) => {return f.get_color();}
-            Piece::R(f) => {return f.get_color();}
-            Piece::N(f) => {return f.get_color();}
-            Piece::B(f) => {return f.get_color();}
-            Piece::P(f) => {return f.get_color();}
+            Piece::K(piece) => {return piece.get_color();}
+            Piece::Q(piece) => {return piece.get_color();}
+            Piece::R(piece) => {return piece.get_color();}
+            Piece::N(piece) => {return piece.get_color();}
+            Piece::B(piece) => {return piece.get_color();}
+            Piece::P(piece) => {return piece.get_color();}
             Piece::Empty=> {return &Color::None;}
+        }
+    }
+
+    pub fn get_moves(&self) -> &[[u8;8];8] {
+        match self {
+            Piece::K(piece) => {return piece.get_moves();}
+            Piece::Q(piece) => {return piece.get_moves();}
+            Piece::R(piece) => {return piece.get_moves();}
+            Piece::N(piece) => {return piece.get_moves();}
+            Piece::B(piece) => {return piece.get_moves();}
+            Piece::P(piece) => {return piece.get_moves();}
+            Piece::Empty=> {return &[[0u8;8];8];}
+        }
+    }
+
+    pub fn is_protected(&mut self, value: bool) {
+        match self {
+            Piece::K(piece) => (),
+            Piece::Q(piece) => {piece.set_protected(value);}
+            Piece::R(piece) => {piece.set_protected(value);}
+            Piece::N(piece) => {piece.set_protected(value);}
+            Piece::B(piece) => {piece.set_protected(value);}
+            Piece::P(piece) => {piece.set_protected(value);}
+            Piece::Empty=> ()
+        }
+    }
+
+    pub fn get_protected(&self) -> bool {
+        match self {
+            Piece::K(_) => return false,
+            Piece::Q(piece) => {return piece.get_protected();}
+            Piece::R(piece) => {return piece.get_protected();}
+            Piece::N(piece) => {return piece.get_protected();}
+            Piece::B(piece) => {return piece.get_protected();}
+            Piece::P(piece) => {return piece.get_protected();}
+            Piece::Empty=> return false
+        }
+    }
+
+    pub fn is_king(&self) -> bool {
+        match self {
+            Piece::K(_) => return true,
+            Piece::Q(_) => return false,
+            Piece::R(_) => return false,
+            Piece::N(_) => return false,
+            Piece::B(_) => return false,
+            Piece::P(_) => return false,
+            Piece::Empty=> return false
         }
     }
 }
@@ -69,19 +117,5 @@ impl Board {
 
 
         Board { positions }
-    }
-}
-
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
     }
 }

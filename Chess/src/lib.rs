@@ -4,6 +4,8 @@ use crate::rook::Rook;
 use crate::knight::Knight;
 use crate::bishop::Bishop;
 use crate::pawn::Pawn;
+use std::fmt;
+use wasm_bindgen::prelude::*;
 
 mod king;
 mod queen;
@@ -11,7 +13,6 @@ mod rook;
 mod knight;
 mod bishop;
 mod pawn;
-
 
 #[derive(PartialEq)]
 pub enum Piece {
@@ -25,7 +26,19 @@ pub enum Piece {
 }
 
 impl Piece {
-    pub fn get_color(&self) -> &Color {
+    pub fn get_piece(&self) -> &str {
+        match self {
+            Piece::K(piece) => {return "King";}
+            Piece::Q(piece) => {return "Queen";}
+            Piece::R(piece) => {return "Rook";}
+            Piece::N(piece) => {return "Knight";}
+            Piece::B(piece) => {return "Bishop";}
+            Piece::P(piece) => {return "Pawn";}
+            Piece::Empty => {return "Empty";}
+        }
+    }
+
+    pub fn get_color(&self) -> Color {
         match self {
             Piece::K(piece) => {return piece.get_color();}
             Piece::Q(piece) => {return piece.get_color();}
@@ -87,6 +100,7 @@ impl Piece {
 }
 
 
+#[wasm_bindgen]
 #[derive(PartialEq)]
 pub enum Color {
     Black,
@@ -94,10 +108,12 @@ pub enum Color {
     None
 }
 
+#[wasm_bindgen]
 pub struct Board {
     positions: [[Piece;8];8],
 }
 
+#[wasm_bindgen]
 impl Board {
     
     //Initializes the start state of a chess game.
@@ -115,7 +131,89 @@ impl Board {
             [R(Rook::new(0,7,White)),N(Knight::new(1,7,White)),B(Bishop::new(2,7,White)),Q(Queen::new(3,7,White)),K(King::new(4,7,White)),B(Bishop::new(5,7,White)),N(Knight::new(6,7,White)),R(Rook::new(7,7,White))]
         ];
 
-
         Board { positions }
+    }
+
+    pub fn get_board(&self) -> String {
+        self.to_string()
+    }
+}
+
+impl fmt::Display for Board {
+
+    /// Converts the board into a string for JavaScript to handle
+    ///
+    /// # Number Representations
+    /// * '0' - Represents a dead cell
+    /// * '1' - Represents a cell that just died
+    /// * '2' - Represents a cell that is currently alive
+    /// * '3' - Represents a cell that is about to be born
+    ///
+    /// # Examples
+    /// ```
+    /// let board = Board.dead_state_instantiation(64,64);
+    /// println!({},board);
+    /// ```
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut filledin = String::new();
+        for i in 0..8 {
+            for j in 0..8 {
+              if self.positions[i as usize][j as usize] == Piece::Empty {
+                write!(f, "{}", '0');
+              }
+              else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Pawn"{
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                    write!(f, "{}", '1');
+                }
+                else {
+                    write!(f, "{}", '7');
+                }
+              }
+              else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Rook" {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                    write!(f, "{}", '2');
+                }
+                else {
+                    write!(f, "{}", '8');
+                }
+              }
+              else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Knight" {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                    write!(f, "{}", '3');
+                }
+                else {
+                    write!(f, "{}", '9');
+                }
+              }
+              else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Bishop" {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                    write!(f, "{}", '4');
+                }
+                else {
+                    write!(f, "{}", 'A');
+                }
+              }
+              else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Queen" {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                    write!(f, "{}", '5');
+                }
+                else {
+                    write!(f, "{}", 'B');
+                }
+              }
+              else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "King" {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                    write!(f, "{}", '6');
+                }
+                else {
+                    write!(f, "{}", 'C');
+                }
+              }
+            }
+            write!(f, "{}", '\n');
+          }
+          
+
+        Ok(())
     }
 }

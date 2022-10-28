@@ -1,6 +1,8 @@
 use crate::Piece;
 use crate::Color;
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 #[derive(PartialEq)]
 pub struct King{
     moves: [[u8;8];8],
@@ -9,15 +11,15 @@ pub struct King{
     color: Color,
 }
 
-
+#[wasm_bindgen]
 impl King {
 
-    pub fn get_moves(&self) -> &[[u8;8];8] {
-        &self.moves
+    pub fn get_moves(&self) -> [[u8;8];8] {
+        self.moves
     }
 
-    pub fn get_color(&self) -> &Color {
-        &self.color
+    pub fn get_color(&self) -> Color {
+        self.color
     }
 
     pub fn new(rank: usize, file: usize, color: Color) -> King {

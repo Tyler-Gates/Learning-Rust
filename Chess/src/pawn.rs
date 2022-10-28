@@ -1,6 +1,8 @@
 use crate::Piece;
 use crate::Color;
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 #[derive(PartialEq)]
 pub struct Pawn{
     moves: [[u8;8];8],
@@ -10,7 +12,7 @@ pub struct Pawn{
     color: Color,
 }
 
-
+#[wasm_bindgen]
 impl Pawn {
 
     pub fn set_protected(&mut self, value: bool) {
@@ -21,12 +23,12 @@ impl Pawn {
         self.protected
     }
 
-    pub fn get_moves(&self) -> &[[u8;8];8] {
-        &self.moves
+    pub fn get_moves(&self) -> [[u8;8];8] {
+        self.moves
     }
 
-    pub fn get_color(&self) -> &Color {
-        &self.color
+    pub fn get_color(&self) -> Color {
+        self.color
     }
 
     pub fn new(rank: usize, file: usize, color: Color) -> Pawn {

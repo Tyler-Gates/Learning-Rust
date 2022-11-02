@@ -46,11 +46,11 @@ impl Piece {
             Piece::N(piece) => {return piece.get_color();}
             Piece::B(piece) => {return piece.get_color();}
             Piece::P(piece) => {return piece.get_color();}
-            Piece::Empty=> {return &Color::None;}
+            Piece::Empty=> {return Color::None;}
         }
     }
 
-    pub fn get_moves(&self) -> &[[u8;8];8] {
+    pub fn get_moves(&self) -> String {
         match self {
             Piece::K(piece) => {return piece.get_moves();}
             Piece::Q(piece) => {return piece.get_moves();}
@@ -58,7 +58,7 @@ impl Piece {
             Piece::N(piece) => {return piece.get_moves();}
             Piece::B(piece) => {return piece.get_moves();}
             Piece::P(piece) => {return piece.get_moves();}
-            Piece::Empty=> {return &[[0u8;8];8];}
+            Piece::Empty=> {return "".to_string();}
         }
     }
 
@@ -101,7 +101,7 @@ impl Piece {
 
 
 #[wasm_bindgen]
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum Color {
     Black,
     White,
@@ -141,19 +141,6 @@ impl Board {
 
 impl fmt::Display for Board {
 
-    /// Converts the board into a string for JavaScript to handle
-    ///
-    /// # Number Representations
-    /// * '0' - Represents a dead cell
-    /// * '1' - Represents a cell that just died
-    /// * '2' - Represents a cell that is currently alive
-    /// * '3' - Represents a cell that is about to be born
-    ///
-    /// # Examples
-    /// ```
-    /// let board = Board.dead_state_instantiation(64,64);
-    /// println!({},board);
-    /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut filledin = String::new();
         for i in 0..8 {
@@ -162,7 +149,7 @@ impl fmt::Display for Board {
                 write!(f, "{}", '0');
               }
               else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Pawn"{
-                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == Color::White {
                     write!(f, "{}", '1');
                 }
                 else {
@@ -170,7 +157,7 @@ impl fmt::Display for Board {
                 }
               }
               else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Rook" {
-                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == Color::White {
                     write!(f, "{}", '2');
                 }
                 else {
@@ -178,7 +165,7 @@ impl fmt::Display for Board {
                 }
               }
               else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Knight" {
-                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == Color::White {
                     write!(f, "{}", '3');
                 }
                 else {
@@ -186,7 +173,7 @@ impl fmt::Display for Board {
                 }
               }
               else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Bishop" {
-                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == Color::White {
                     write!(f, "{}", '4');
                 }
                 else {
@@ -194,7 +181,7 @@ impl fmt::Display for Board {
                 }
               }
               else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "Queen" {
-                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == Color::White {
                     write!(f, "{}", '5');
                 }
                 else {
@@ -202,7 +189,7 @@ impl fmt::Display for Board {
                 }
               }
               else if Piece::get_piece(&self.positions[i as usize][j as usize]) == "King" {
-                if Piece::get_color(&self.positions[i as usize][j as usize]) == &Color::White {
+                if Piece::get_color(&self.positions[i as usize][j as usize]) == Color::White {
                     write!(f, "{}", '6');
                 }
                 else {
@@ -210,7 +197,6 @@ impl fmt::Display for Board {
                 }
               }
             }
-            write!(f, "{}", '\n');
           }
           
 

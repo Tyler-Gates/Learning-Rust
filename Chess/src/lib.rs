@@ -197,6 +197,7 @@ impl fmt::Display for Board {
                 }
               }
             }
+            write!(f, "{}", '\n');
           }
           
 
